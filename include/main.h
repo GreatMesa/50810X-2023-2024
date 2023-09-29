@@ -1,4 +1,3 @@
-#pragma once
 /**
  * \file main.h
  *
@@ -23,7 +22,7 @@
  *
  * For instance, E_CONTROLLER_MASTER has a shorter name: CONTROLLER_MASTER.
  * E_CONTROLLER_MASTER is pedantically correct within the PROS styleguide, but
- * not convenient for most student programmers.
+ * not convienent for most student programmers.
  */
 #define PROS_USE_SIMPLE_NAMES
 
@@ -41,7 +40,7 @@
  * You should add more #includes here
  */
 #include "okapi/api.hpp"
-#include "pros/api_legacy.h"
+#include "models/api.hpp"
 
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do
@@ -51,10 +50,9 @@
  * concurrently! The okapi namespace will export all symbols inside the pros
  * namespace.
  */
-// using namespace pros;
+//using namespace pros;
 // using namespace pros::literals;
-using namespace okapi;
-
+//using namespace okapi;
 
 /**
  * Prototypes for the competition control tasks are redefined here to ensure
@@ -78,10 +76,6 @@ void opcontrol(void);
  * You can add C++-only headers here
  */
 #include <iostream>
-#include <filesystem>
-#include "50810XMain/buttons.hpp"
-#include "globals.hpp"
-#include "gif-pros/gifclass.hpp"
 #endif
 
 #endif  // _PROS_MAIN_H_
