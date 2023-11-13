@@ -1,5 +1,9 @@
 #include "config.hpp"
-
+using namespace lib50810;
+ChassisConstraint constraint(7_ftps,10_ftps2,10_ftps2);
+FFController feedfoward(0.24,0.02,0.02,0.05,0);
+pathFollower profile(chassis,trapezoidalProfile(constraint,0.02),feedfoward);
+turnPID turnController(Imu,chassis,0.5,2,0.15,0,0.18);
 /**
  * A callback function for LLEMU's center button.
  *
@@ -50,7 +54,13 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous()
+{
+	LeftDrive.setBrakeMode(AbstractMotor::brakeMode::brake);
+	RightDrive.setBrakeMode(AbstractMotor::brakeMode::brake);
+	profile.move(35_in);
+	profile.move(-10_in);
+ }
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -67,34 +77,21 @@ void autonomous() {}
  */
 void opcontrol()
 {
+	Catapult.moveRelative(360,300);
 	LeftDrive.setBrakeMode(AbstractMotor::brakeMode::coast);
 	RightDrive.setBrakeMode(AbstractMotor::brakeMode::coast);
+	//Joystick Values
+	double A1 = 0;
+	double A2 = 0;
+	double A3 = 0;
+	double A4 = 0;
 	while(true){
-	chassis->getModel()->arcade(master.getAnalog(ControllerAnalog::leftY) * master.getAnalog(ControllerAnalog::leftY),master.getAnalog(ControllerAnalog::rightX) * master.getAnalog(ControllerAnalog::rightX));
-	if(master[ControllerDigital::L1].changedToPressed())
-		{
-			Catapult.moveRelative(-1080,300);
-		}
-	if(master[ControllerDigital::up].changedToPressed())
-		{
-			Catapult.moveRelative(-120,300);
-		}
-	if(master[ControllerDigital::A].changedToPressed())
-		{
-			Catapult.moveVoltage(-6500);
-		}
-	if(master[ControllerDigital::B].changedToPressed())
-		{
-			Catapult.moveVoltage(0);
-		}
-	if(master[ControllerDigital::R2].changedToPressed())
-		{
-			claw.toggle();
-		}
-	if(master[ControllerDigital::L2].changedToPressed())
-		{
-			wings.toggle();
-		}
+	//Collecting Controller Values
+	A1 = master.getAnalog(ControllerAnalog::leftY);
+	A3 = master.getAnalog(ControllerAnalog::rightX);
+	//Setting up Driver Control
+	chassis->getModel()->arcade(-A1,-(A3 * A3));
+	
 	pros::delay(20);
 	}
 }

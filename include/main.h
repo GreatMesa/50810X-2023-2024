@@ -41,6 +41,7 @@
  */
 #include "okapi/api.hpp"
 #include "models/api.hpp"
+#include "lib50810/api.h"
 
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do
@@ -76,6 +77,7 @@ void opcontrol(void);
  * You can add C++-only headers here
  */
 #include <iostream>
+#include <memory>
 #endif
 
 #endif  // _PROS_MAIN_H_
