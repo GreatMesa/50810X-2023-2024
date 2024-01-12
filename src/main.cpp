@@ -1,9 +1,10 @@
 #include "config.hpp"
+#include <iostream>
 using namespace lib50810;
-ChassisConstraint constraint(7_ftps,10_ftps2,10_ftps2);
-FFController feedfoward(0.24,0.02,0.02,0.05,0);
-pathFollower profile(chassis,trapezoidalProfile(constraint,0.02),feedfoward);
-turnPID turnController(Imu,chassis,0.5,2,0.15,0,0.18);
+ChassisConstraint constraint(7_ftps, 10_ftps2, 10_ftps2);
+FFController feedfoward(0.24, 0.02, 0.02, 0.05, 0);
+pathFollower profile(chassis, trapezoidalProfile(constraint, 0.02), feedfoward);
+turnPID turnController(Imu, chassis, 0.5, 2, 0.15, 0, 0.18);
 /**
  * A callback function for LLEMU's center button.
  *
@@ -12,7 +13,6 @@ turnPID turnController(Imu,chassis,0.5,2,0.15,0,0.18);
  */
 void on_center_button()
 {
-	
 }
 
 /**
@@ -60,7 +60,7 @@ void autonomous()
 	RightDrive.setBrakeMode(AbstractMotor::brakeMode::brake);
 	profile.move(35_in);
 	profile.move(-10_in);
- }
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -77,21 +77,34 @@ void autonomous()
  */
 void opcontrol()
 {
-	Catapult.moveRelative(360,300);
+	bool toggle = false;
 	LeftDrive.setBrakeMode(AbstractMotor::brakeMode::coast);
 	RightDrive.setBrakeMode(AbstractMotor::brakeMode::coast);
-	//Joystick Values
+	// Joystick Values
 	double A1 = 0;
 	double A2 = 0;
 	double A3 = 0;
 	double A4 = 0;
-	while(true){
-	//Collecting Controller Values
-	A1 = master.getAnalog(ControllerAnalog::leftY);
-	A3 = master.getAnalog(ControllerAnalog::rightX);
-	//Setting up Driver Control
-	chassis->getModel()->arcade(-A1,-(A3 * A3));
-	
-	pros::delay(20);
+	while (true)
+	{
+		// Collecting Controller Values
+		A1 = master.get_analog(ANALOG_RIGHT_X);
+		A3 = master.get_analog(ANALOG_LEFT_Y);
+		// Setting up Driver Control
+		chassis->getModel()->arcade(A3, A1);
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_UP))
+		{
+			wingsL.toggle();
+			wingsR.toggle();
+		}
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT))
+		{
+			wingsL.toggle();
+		}
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT))
+		{
+			wingsR.toggle();
+		}
+		pros::delay(20);
 	}
 }
